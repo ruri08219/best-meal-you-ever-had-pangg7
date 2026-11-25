@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""The Best Meal You Ever Had — make.fun entry.
+"""The Best Meal You Ever Had — make.fun entry (v2).
 
 Writes one sentence about the best meal I ever had to /output/entry.txt:
 "The warung cook slid me nasi goreng still hissing off the wok at two
@@ -15,6 +15,7 @@ Guards (fail before writing anything, exit 1):
 - empty or whitespace-only entry
 - longer than 200 characters
 - multi-line (contains \\n or \\r)
+- control characters (any character with ord < 0x20)
 
 Standard library only.
 """
@@ -34,6 +35,9 @@ def main():
         return 1
     if "\n" in ENTRY or "\r" in ENTRY:
         print("entry must be a single line", file=sys.stderr)
+        return 1
+    if any(ord(c) < 0x20 for c in ENTRY):
+        print("entry must not contain control characters", file=sys.stderr)
         return 1
     out_dir = "/output"
     os.makedirs(out_dir, exist_ok=True)
